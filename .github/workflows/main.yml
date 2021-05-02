@@ -67,14 +67,14 @@ jobs:
       uses: Azure/k8s-deploy@v1.3
       with:
         # Acceptable values: kubeconfig or service-account
-        manifests: 
-          k8s/mongodb/deployment.yaml
-          k8s/mongodb/service.yaml
-        
+          manifests: |
+            k8s/mongodb/deployment.yaml
+            k8s/mongodb/service.yaml
+            
     - name: Deploy WebApi
       uses: Azure/k8s-deploy@v1.3
       with:
-        images: canariodocker/api-bootcamp-produto:latest
-        # Acceptable values: kubeconfig or service-account
-        manifests: 
-          k8s/api/deployment.yaml
+          images: canariodocker/api-bootcamp-produto:${{github.run_number}}
+          # Acceptable values: kubeconfig or service-account
+          manifests: |
+            k8s/api/deployment.yaml
