@@ -38,5 +38,5 @@ jobs:
           file: ./src/Dockerfile
           push: True
           tags: |
-                fabricioveronez/api-bootcamp-produto:latest
-                fabricioveronez/api-bootcamp-produto:${{github.run_number}}
+                canariodocker/node:latest
+                canariodocker/node:${{github.run_number}}
