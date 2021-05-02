@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: CI
+name: CI/CD
 
 # Controls when the action will run. 
 on:
@@ -14,7 +14,7 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
-  build:
+  CI:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
@@ -44,3 +44,33 @@ jobs:
           tags: |
                 canariodocker/api-bootcamp-produto:latest
                 canariodocker/api-bootcamp-produto:${{github.run_number}}
+
+  CD:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    needs: [CI]
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    - name: Kubernetes set context
+      uses: Azure/k8s-set-context@v1
+      with:
+        # Acceptable values: kubeconfig or service-account
+        method: kubeconfig
+        # Kubernetes Config
+        kubeconfig: ${{secrets.KUBE_CONFIG}}
+        
+    - name: Deploy MongoDB
+      uses: Azure/k8s-deploy@v1.3
+      with:
+        # Acceptable values: kubeconfig or service-account
+        manifests: 
+          k8s/mogodb/deployment.yaml
+          k8s/mogodb/service.yaml
+        
+    - name: Deploy WebApi
+      uses: Azure/k8s-deploy@v1.3
+      with:
+        images: canariodocker/api-bootcamp-produto:latest
+        # Acceptable values: kubeconfig or service-account
+        manifests: 
+          k8s/api/deployment.yaml
